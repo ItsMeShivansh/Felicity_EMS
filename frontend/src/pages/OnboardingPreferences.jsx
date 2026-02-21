@@ -25,7 +25,7 @@ const OnboardingPreferences = () => {
 
   const fetchOrganizers = async () => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/api/organizers`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/organizers`);
       setOrganizers(res.data);
     } catch (err) {
       console.error('Error fetching organizers:', err);
@@ -53,7 +53,7 @@ const OnboardingPreferences = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.patch(
-        `\${import.meta.env.VITE_API_URL}/api/participant/preferences`,
+        `${import.meta.env.VITE_API_URL}/api/participant/preferences`,
         { interests, followedOrganizers },
         { headers: { Authorization: token } }
       );
@@ -79,7 +79,7 @@ const OnboardingPreferences = () => {
       const token = localStorage.getItem('token');
 
       await axios.patch(
-        `\${import.meta.env.VITE_API_URL}/api/participant/preferences`,
+        `${import.meta.env.VITE_API_URL}/api/participant/preferences`,
         { interests: [], followedOrganizers: [] },
         { headers: { Authorization: token } }
       );

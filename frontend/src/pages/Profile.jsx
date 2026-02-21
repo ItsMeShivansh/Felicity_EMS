@@ -49,7 +49,7 @@ const Profile = () => {
       }
 
       const config = { headers: { Authorization: token } };
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/api/participant/profile`, config);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/participant/profile`, config);
       
       setProfile(res.data);
       setFormData({
@@ -91,7 +91,7 @@ const Profile = () => {
 
   const fetchOrganizers = async () => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/api/organizers`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/organizers`);
       setAllOrganizers(res.data);
     } catch (err) {
       console.error('Error fetching organizers:', err);
@@ -109,7 +109,7 @@ const Profile = () => {
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: token } };
       
-      await axios.patch(`\${import.meta.env.VITE_API_URL}/api/participant/profile`, formData, config);
+      await axios.patch(`${import.meta.env.VITE_API_URL}/api/participant/profile`, formData, config);
       
       alert('Profile updated successfully!');
       setEditing(false);
@@ -136,7 +136,7 @@ const Profile = () => {
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: token } };
       
-      await axios.patch(`\${import.meta.env.VITE_API_URL}/api/participant/change-password`, {
+      await axios.patch(`${import.meta.env.VITE_API_URL}/api/participant/change-password`, {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       }, config);

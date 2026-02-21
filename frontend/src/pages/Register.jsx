@@ -23,7 +23,7 @@ const Register = () => {
   const handleRegisteration = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`\${import.meta.env.VITE_API_URL}/api/auth/register`, formData);
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, formData);
       
 
       if (res.data.token) {

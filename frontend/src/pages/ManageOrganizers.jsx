@@ -20,7 +20,7 @@ const ManageOrganizers = () => {
   const fetchOrganizers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/api/admin/organizers`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/organizers`, {
         headers: { Authorization: token }
       });
       setOrganizers(res.data);
@@ -37,7 +37,7 @@ const ManageOrganizers = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post(`\${import.meta.env.VITE_API_URL}/api/admin/add-organizer`, formData, {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/add-organizer`, formData, {
         headers: { Authorization: token }
       });
       

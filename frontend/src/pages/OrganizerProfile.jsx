@@ -46,7 +46,7 @@ const OrganizerProfile = () => {
       }
 
       const config = { headers: { Authorization: token } };
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/api/organizers/profile/me`, config);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/organizers/profile/me`, config);
       
       setProfile(res.data);
       setFormData({
@@ -69,7 +69,7 @@ const OrganizerProfile = () => {
     try {
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: token } };
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/api/organizers/password-reset-requests`, config);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/organizers/password-reset-requests`, config);
       setResetRequests(res.data);
     } catch (err) {
       console.error('Error fetching reset requests:', err);
@@ -81,7 +81,7 @@ const OrganizerProfile = () => {
     try {
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: token } };
-      await axios.post(`\${import.meta.env.VITE_API_URL}/api/organizers/password-reset-request`, { reason: resetReason }, config);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/organizers/password-reset-request`, { reason: resetReason }, config);
       setMessage({ type: 'success', text: 'Password reset request submitted to admin!' });
       setResetReason('');
       setShowResetForm(false);
@@ -105,7 +105,7 @@ const OrganizerProfile = () => {
       const config = { headers: { Authorization: token } };
       
       const res = await axios.patch(
-        `\${import.meta.env.VITE_API_URL}/api/organizers/profile/me`,
+        `${import.meta.env.VITE_API_URL}/api/organizers/profile/me`,
         formData,
         config
       );

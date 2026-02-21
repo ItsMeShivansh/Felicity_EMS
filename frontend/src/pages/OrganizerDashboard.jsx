@@ -17,7 +17,7 @@ const OrganizerDashboard = () => {
   const fetchAnalytics = async () => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`\${import.meta.env.VITE_API_URL}/api/events/analytics/overall`, {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/events/analytics/overall`, {
         headers: { Authorization: token }
       });
       setAnalytics(data);
@@ -29,7 +29,7 @@ const OrganizerDashboard = () => {
   const fetchEvents = async () => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`\${import.meta.env.VITE_API_URL}/api/events/my-events`, {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/events/my-events`, {
         headers: { Authorization: token }
       });
       setEvents(data);

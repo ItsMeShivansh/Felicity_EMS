@@ -213,7 +213,7 @@ const CreateEvent = () => {
 
 
         const response = await axios.post(
-          `\${import.meta.env.VITE_API_URL}/api/events/create-draft`,
+          `${import.meta.env.VITE_API_URL}/api/events/create-draft`,
           eventData,
           { headers: { Authorization: token } }
         );
@@ -300,7 +300,7 @@ const CreateEvent = () => {
       }
 
       await axios.post(
-        `\${import.meta.env.VITE_API_URL}/api/events/create-draft`,
+        `${import.meta.env.VITE_API_URL}/api/events/create-draft`,
         eventData,
         {
           headers: { Authorization: token }

@@ -91,7 +91,7 @@ const EventDetail = () => {
       setMessage({ type: '', text: '' });
       const token = localStorage.getItem('token');
       const { data } = await axios.post(
-        `\${import.meta.env.VITE_API_URL}/api/teams/create`,
+        `${import.meta.env.VITE_API_URL}/api/teams/create`,
         { eventId, teamName },
         { headers: { Authorization: token } }
       );
@@ -109,7 +109,7 @@ const EventDetail = () => {
       setMessage({ type: '', text: '' });
       const token = localStorage.getItem('token');
       const { data } = await axios.post(
-        `\${import.meta.env.VITE_API_URL}/api/teams/join`,
+        `${import.meta.env.VITE_API_URL}/api/teams/join`,
         { inviteCode },
         { headers: { Authorization: token } }
       );

@@ -37,7 +37,7 @@ const BrowseEvents = () => {
       }
 
       const config = { headers: { Authorization: token } };
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/api/participant/preferences`, config);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/participant/preferences`, config);
       setFollowedOrganizers(res.data.followedOrganizers.filter(org => org).map(org => org._id));
     } catch (err) {
       console.error('Error fetching user data:', err);
@@ -46,7 +46,7 @@ const BrowseEvents = () => {
 
   const fetchTrending = async () => {
     try {
-      const res = await axios.get(`\${import.meta.env.VITE_API_URL}/api/events/browse/trending`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/events/browse/trending`);
       setTrendingEvents(res.data);
     } catch (err) {
       console.error('Error fetching trending:', err);

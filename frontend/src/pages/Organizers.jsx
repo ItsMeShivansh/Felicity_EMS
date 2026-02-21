@@ -22,11 +22,11 @@ const Organizers = () => {
         const config = { headers: { Authorization: token } };
 
 
-        const orgRes = await axios.get(`\${import.meta.env.VITE_API_URL}/api/organizers`, config);
+        const orgRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/organizers`, config);
         setOrganizers(orgRes.data);
 
 
-        const prefRes = await axios.get(`\${import.meta.env.VITE_API_URL}/api/participant/preferences`, config);
+        const prefRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/participant/preferences`, config);
         
 
         const currentFollows = prefRes.data.followedOrganizers.map(org => 
@@ -64,7 +64,7 @@ const Organizers = () => {
 
 
       await axios.patch(
-        `\${import.meta.env.VITE_API_URL}/api/participant/preferences`,
+        `${import.meta.env.VITE_API_URL}/api/participant/preferences`,
         { 
           interests: userInterests,
           followedOrganizers: newFollowedIds 

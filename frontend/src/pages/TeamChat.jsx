@@ -49,7 +49,7 @@ const TeamChat = () => {
       setLoading(false);
 
 
-      const socket = io(`\${import.meta.env.VITE_API_URL}`, {
+      const socket = io(`${import.meta.env.VITE_API_URL}`, {
         auth: { token }
       });
       socketRef.current = socket;

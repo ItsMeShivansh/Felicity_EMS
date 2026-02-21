@@ -30,7 +30,7 @@ const MyRegistrations = () => {
   const fetchRegistrations = async () => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get(`\${import.meta.env.VITE_API_URL}/api/registrations/my-registrations`, {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/registrations/my-registrations`, {
         headers: { Authorization: token }
       });
       setRegistrations(data);
@@ -129,7 +129,7 @@ const MyRegistrations = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `\${import.meta.env.VITE_API_URL}/api/registrations/export-calendar-batch`,
+        `${import.meta.env.VITE_API_URL}/api/registrations/export-calendar-batch`,
         {
           headers: { Authorization: token },
           responseType: 'blob'
