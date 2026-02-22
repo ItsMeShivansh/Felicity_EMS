@@ -66,11 +66,12 @@ router.post('/event/:eventId', verifyToken, async (req, res) => {
     }
 
     // Atomically increment registration count under limit
+    const limitQuery = (event.registrationLimit != null && !isNaN(event.registrationLimit))
+      ? { _id: eventId, $expr: { $lt: ['$currentRegistrations', '$registrationLimit'] } }
+      : { _id: eventId };
+
     const updatedEvent = await Event.findOneAndUpdate(
-      {
-        _id: eventId,
-        $expr: { $lt: ['$currentRegistrations', '$registrationLimit'] }
-      },
+      limitQuery,
       { $inc: { currentRegistrations: 1 } },
       { new: true }
     );
@@ -222,6 +223,10 @@ router.patch('/cancel/:registrationId', verifyToken, async (req, res) => {
       return res.status(400).json({ message: 'Registration is already cancelled' });
     }
 
+    if (registration.isMerchandise) {
+      return res.status(400).json({ message: 'Merchandise orders cannot be cancelled' });
+    }
+
     if (registration.event.hasStarted()) {
       return res.status(400).json({
         message: 'Cannot cancel registration. Event has already started'
@@ -229,6 +234,7 @@ router.patch('/cancel/:registrationId', verifyToken, async (req, res) => {
     }
 
     registration.status = 'cancelled';
+    registration.qrCode = '';
     await registration.save();
 
     // Atomically decrement counter
@@ -292,11 +298,12 @@ router.post('/merchandise/:eventId', verifyToken, async (req, res) => {
     }
 
     // Atomically increment registration count under limit
+    const limitQuery = (event.registrationLimit != null && !isNaN(event.registrationLimit))
+      ? { _id: eventId, $expr: { $lt: ['$currentRegistrations', '$registrationLimit'] } }
+      : { _id: eventId };
+
     const updatedEvent = await Event.findOneAndUpdate(
-      {
-        _id: eventId,
-        $expr: { $lt: ['$currentRegistrations', '$registrationLimit'] }
-      },
+      limitQuery,
       { $inc: { currentRegistrations: 1 } },
       { new: true }
     );

@@ -151,10 +151,15 @@ const MyRegistrations = () => {
 
   const renderRegistrationCard = (registration) => {
     const event = registration.event;
+    const isMerchandise = registration.isMerchandise;
+    const paymentApproved = !isMerchandise || registration.paymentStatus === 'completed';
+    const isCancelled = registration.status === 'cancelled';
     const canCancel = activeTab === 'upcoming' && 
                       new Date(event?.startDate) > new Date() &&
-                      registration.status === 'confirmed';
+                      registration.status === 'confirmed' &&
+                      !isMerchandise;
     const isUpcoming = activeTab === 'upcoming' && new Date(event?.startDate) > new Date();
+    const showTicketButtons = !isCancelled && paymentApproved;
 
     return (
       <div key={registration._id} className="registration-card">
@@ -172,6 +177,14 @@ const MyRegistrations = () => {
             <p><strong>🎫 Ticket ID:</strong> <code>{registration.ticketId}</code></p>
             <p><strong>✅ Registered:</strong> {new Date(registration.registrationDate).toLocaleDateString()}</p>
             
+            {isMerchandise && (
+              <p><strong>💳 Payment:</strong> <span className={`status-badge ${registration.paymentStatus}`}>
+                {registration.paymentStatus === 'pending' && '⏳ Payment Pending'}
+                {registration.paymentStatus === 'completed' && '✅ Payment Approved'}
+                {registration.paymentStatus === 'failed' && '❌ Payment Rejected'}
+              </span></p>
+            )}
+
             {registration.isMerchandise && registration.itemsPurchased && (
               <div className="merchandise-details">
                 <p><strong>Items:</strong></p>
@@ -189,13 +202,27 @@ const MyRegistrations = () => {
         </div>
 
         <div className="card-actions">
-          <button onClick={() => viewTicket(registration)} className="btn-primary btn-sm">
-            View Ticket
-          </button>
-          <button onClick={() => downloadTicket(registration)} className="btn-secondary btn-sm">
-            Download QR
-          </button>
-          {isUpcoming && !registration.isMerchandise && (
+          {showTicketButtons && (
+            <>
+              <button onClick={() => viewTicket(registration)} className="btn-primary btn-sm">
+                View Ticket
+              </button>
+              <button onClick={() => downloadTicket(registration)} className="btn-secondary btn-sm">
+                Download QR
+              </button>
+            </>
+          )}
+          {isMerchandise && !paymentApproved && !isCancelled && (
+            <span className="info-text" style={{ fontSize: '0.85rem' }}>
+              {registration.paymentStatus === 'pending' ? 'Ticket available after payment approval' : 'Re-upload payment proof to get ticket'}
+            </span>
+          )}
+          {isCancelled && (
+            <span className="info-text" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              Registration cancelled
+            </span>
+          )}
+          {isUpcoming && !registration.isMerchandise && !isCancelled && (
             <div className="calendar-dropdown">
               <button 
                 onClick={() => setShowCalendarMenu(showCalendarMenu === registration._id ? null : registration._id)} 
@@ -343,8 +370,16 @@ const MyRegistrations = () => {
                   )}
                 </div>
                 <div className="ticket-qr">
-                  <img src={selectedTicket.qrCode} alt="Ticket QR Code" />
-                  <p className="text-muted">Present this QR code at the event</p>
+                  {selectedTicket.qrCode && selectedTicket.qrCode !== 'pending' ? (
+                    <>
+                      <img src={selectedTicket.qrCode} alt="Ticket QR Code" />
+                      <p className="text-muted">Present this QR code at the event</p>
+                    </>
+                  ) : (
+                    <p className="info-text" style={{ padding: '2rem', textAlign: 'center' }}>
+                      ⏳ QR code will be available after payment is approved
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="form-actions">

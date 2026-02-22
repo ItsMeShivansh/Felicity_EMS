@@ -283,7 +283,8 @@ const EventDetail = () => {
     );
   }
 
-  const availableSlots = event.registrationLimit - event.currentRegistrations;
+  const hasLimit = event.registrationLimit != null && !isNaN(event.registrationLimit);
+  const availableSlots = hasLimit ? event.registrationLimit - event.currentRegistrations : Infinity;
   const registrationOpen = new Date() < new Date(event.registrationDeadline) && 
                            event.status === 'published' && 
                            availableSlots > 0;
@@ -363,8 +364,8 @@ const EventDetail = () => {
                   <span className="icon">👥</span>
                   <div>
                     <strong>Available Slots</strong>
-                    <p className={availableSlots < 10 ? 'text-warning' : ''}>
-                      {availableSlots} / {event.registrationLimit}
+                    <p className={hasLimit && availableSlots < 10 ? 'text-warning' : ''}>
+                      {hasLimit ? `${availableSlots} / ${event.registrationLimit}` : 'Unlimited'}
                     </p>
                   </div>
                 </div>
@@ -506,7 +507,7 @@ const EventDetail = () => {
                   <p className="error-text">
                     {event.status !== 'published' && '⏳ Registration not open yet'}
                     {new Date() >= new Date(event.registrationDeadline) && '⏰ Registration closed'}
-                    {availableSlots <= 0 && '🚫 Event is full'}
+                    {hasLimit && availableSlots <= 0 && '🚫 Event is full'}
                   </p>
                 </div>
               )}

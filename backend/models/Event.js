@@ -152,6 +152,7 @@ const eventSchema = new mongoose.Schema({
 
 // Check if event is full
 eventSchema.methods.isFull = function () {
+  if (this.registrationLimit == null || isNaN(this.registrationLimit)) return false;
   return this.currentRegistrations >= this.registrationLimit;
 };
 
