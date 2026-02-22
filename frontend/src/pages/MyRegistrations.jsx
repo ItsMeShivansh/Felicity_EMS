@@ -61,9 +61,8 @@ const MyRegistrations = () => {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(
+      await axios.delete(
         `${import.meta.env.VITE_API_URL}/api/registrations/cancel/${registrationId}`,
-        {},
         { headers: { Authorization: token } }
       );
       alert('Registration cancelled successfully');
@@ -320,12 +319,6 @@ const MyRegistrations = () => {
             onClick={() => setActiveTab('past')}
           >
             Completed ({registrations.past.length})
-          </button>
-          <button
-            className={`tab ${activeTab === 'cancelled' ? 'active' : ''}`}
-            onClick={() => setActiveTab('cancelled')}
-          >
-            Cancelled ({registrations.cancelled.length})
           </button>
         </div>
 
