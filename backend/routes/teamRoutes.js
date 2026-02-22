@@ -169,8 +169,8 @@ router.post('/join', verifyToken, async (req, res) => {
     await team.populate('members.participant', 'firstName lastName email');
 
     res.json({
-      message: team.status === 'complete' 
-        ? 'Team is now complete! Tickets have been generated for all members.' 
+      message: team.status === 'complete'
+        ? 'Team is now complete! Tickets have been generated for all members.'
         : 'Successfully joined the team!',
       team: {
         _id: team._id,
@@ -209,8 +209,8 @@ router.post('/:teamId/complete', verifyToken, async (req, res) => {
       return res.status(400).json({ message: 'Team is already ' + team.status });
     }
     if (team.members.length < team.minSize) {
-      return res.status(400).json({ 
-        message: `Team needs at least ${team.minSize} members. Currently has ${team.members.length}.` 
+      return res.status(400).json({
+        message: `Team needs at least ${team.minSize} members. Currently has ${team.members.length}.`
       });
     }
 
@@ -219,11 +219,14 @@ router.post('/:teamId/complete', verifyToken, async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
 
-    // Check enough slots
+    // Check enough slots (skip check if registration limit is unlimited)
     const slotsNeeded = team.members.length;
-    const availableSlots = event.registrationLimit - event.currentRegistrations;
-    if (slotsNeeded > availableSlots) {
-      return res.status(400).json({ message: 'Not enough slots available for the team' });
+    const hasLimit = event.registrationLimit != null && !isNaN(event.registrationLimit);
+    if (hasLimit) {
+      const availableSlots = event.registrationLimit - event.currentRegistrations;
+      if (slotsNeeded > availableSlots) {
+        return res.status(400).json({ message: 'Not enough slots available for the team' });
+      }
     }
 
     team.status = 'complete';
@@ -310,7 +313,7 @@ router.get('/info/:teamId', verifyToken, async (req, res) => {
     if (!team) return res.status(404).json({ message: 'Team not found' });
 
     const isMember = team.members.some(m => m.participant._id.toString() === participantId) ||
-                      team.leader._id.toString() === participantId;
+      team.leader._id.toString() === participantId;
     if (!isMember) return res.status(403).json({ message: 'Not a team member' });
 
     res.json({
@@ -339,7 +342,7 @@ router.get('/info/:teamId', verifyToken, async (req, res) => {
 router.get('/event/:eventId', verifyToken, async (req, res) => {
   try {
     const { eventId } = req.params;
-    
+
     const event = await Event.findById(eventId);
     if (!event) {
       return res.status(404).json({ message: 'Event not found' });

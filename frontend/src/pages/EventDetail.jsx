@@ -401,16 +401,11 @@ const EventDetail = () => {
               {/* Hackathon Team Registration */}
               {event.eventType === 'hackathon' ? (
                 <div>
-                  {isRegistered ? (
-                    <div className="registered-status">
-                      <p className="success-text">✅ You are registered!</p>
-                      {team && <p>Team: {team.teamName}</p>}
-                      <button onClick={() => setShowTicket(true)} className="btn-primary">
-                        View Ticket
-                      </button>
-                    </div>
-                  ) : team ? (
+                  {team ? (
                     <div className="team-status-card">
+                      {isRegistered && (
+                        <p className="success-text" style={{ marginBottom: '0.75rem' }}>✅ You are registered!</p>
+                      )}
                       <p><strong>Team:</strong> {team.teamName}</p>
                       <p><strong>Members:</strong> {team.members.length} / {team.maxSize}</p>
                       <p><strong>Status:</strong> <span className="status-badge">{team.status}</span></p>
@@ -423,13 +418,18 @@ const EventDetail = () => {
                           </div>
                         ))}
                       </div>
+                      {isRegistered && team.status === 'complete' && (
+                        <button onClick={() => setShowTicket(true)} className="btn-primary btn-block" style={{ marginTop: '1rem' }}>
+                          View Ticket
+                        </button>
+                      )}
                       {team.isLeader && team.status === 'forming' && team.members.length >= team.minSize && (
                         <button onClick={handleCompleteTeam} className="btn-primary btn-block" style={{ marginTop: '1rem' }}>
                           Complete Team & Get Tickets
                         </button>
                       )}
                       {team.status === 'complete' && (
-                        <button onClick={() => navigate(`/team-chat/${team._id}`)} className="btn-primary btn-block" style={{ marginTop: '1rem' }}>
+                        <button onClick={() => navigate(`/team-chat/${team._id}`)} className="btn-primary btn-block" style={{ marginTop: '0.5rem' }}>
                           Team Chat
                         </button>
                       )}
@@ -438,6 +438,13 @@ const EventDetail = () => {
                           Share the invite code with teammates to join
                         </p>
                       )}
+                    </div>
+                  ) : isRegistered ? (
+                    <div className="registered-status">
+                      <p className="success-text">✅ You are registered!</p>
+                      <button onClick={() => setShowTicket(true)} className="btn-primary">
+                        View Ticket
+                      </button>
                     </div>
                   ) : registrationOpen ? (
                     <div>
