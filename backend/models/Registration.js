@@ -6,7 +6,7 @@ const registrationSchema = new mongoose.Schema({
   event: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
   registrationDate: { type: Date, default: Date.now },
   status: { type: String, enum: ['confirmed', 'cancelled', 'attended'], default: 'confirmed' },
-  qrCode: { type: String, required: true },
+  qrCode: { type: String, default: '' },
   customFormData: { type: Object, default: {} },
   isMerchandise: { type: Boolean, default: false },
   itemsPurchased: [{ itemName: String, quantity: Number, price: Number }],

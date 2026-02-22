@@ -202,8 +202,8 @@ router.get('/check/:eventId', verifyToken, async (req, res) => {
   }
 });
 
-// Cancel registration (deletes from database)
-router.delete('/cancel/:registrationId', verifyToken, async (req, res) => {
+// Cancel registration
+router.patch('/cancel/:registrationId', verifyToken, async (req, res) => {
   try {
     const { registrationId } = req.params;
     const participantId = req.user.id;
@@ -219,6 +219,10 @@ router.delete('/cancel/:registrationId', verifyToken, async (req, res) => {
       return res.status(403).json({ message: 'Access denied' });
     }
 
+    if (registration.status === 'cancelled') {
+      return res.status(400).json({ message: 'Registration is already cancelled' });
+    }
+
     if (registration.isMerchandise) {
       return res.status(400).json({ message: 'Merchandise orders cannot be cancelled' });
     }
@@ -229,18 +233,17 @@ router.delete('/cancel/:registrationId', verifyToken, async (req, res) => {
       });
     }
 
-    const eventId = registration.event._id;
+    registration.status = 'cancelled';
+    registration.qrCode = '';
+    await registration.save();
 
-    // Delete the registration from the database
-    await Registration.findByIdAndDelete(registrationId);
+    // Atomically decrement counter
+    await Event.findByIdAndUpdate(
+      registration.event._id,
+      { $inc: { currentRegistrations: -1 } }
+    );
 
-    // Remove registration reference from Event and decrement counter
-    await Event.findByIdAndUpdate(eventId, {
-      $pull: { registrations: registrationId },
-      $inc: { currentRegistrations: -1 }
-    });
-
-    res.json({ message: 'Registration cancelled successfully' });
+    res.json({ message: 'Registration cancelled successfully', registration });
   } catch (err) {
     console.error('Error cancelling registration:', err);
     res.status(500).json({ message: 'Server error', error: err.message });

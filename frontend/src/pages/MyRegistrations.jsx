@@ -61,8 +61,9 @@ const MyRegistrations = () => {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(
+      await axios.patch(
         `${import.meta.env.VITE_API_URL}/api/registrations/cancel/${registrationId}`,
+        {},
         { headers: { Authorization: token } }
       );
       alert('Registration cancelled successfully');
@@ -277,6 +278,9 @@ const MyRegistrations = () => {
   } else if (activeTab === 'merchandise') {
     currentList = [...registrations.upcoming, ...registrations.past]
       .filter(r => r.isMerchandise);
+  } else if (activeTab === 'hackathon') {
+    currentList = [...registrations.upcoming, ...registrations.past]
+      .filter(r => r.event?.eventType === 'hackathon');
   } else {
     currentList = registrations[activeTab] || [];
   }
@@ -315,10 +319,22 @@ const MyRegistrations = () => {
             Merchandise ({registrations.upcoming.filter(r => r.isMerchandise).length + registrations.past.filter(r => r.isMerchandise).length})
           </button>
           <button
+            className={`tab ${activeTab === 'hackathon' ? 'active' : ''}`}
+            onClick={() => setActiveTab('hackathon')}
+          >
+            Hackathon ({registrations.upcoming.filter(r => r.event?.eventType === 'hackathon').length + registrations.past.filter(r => r.event?.eventType === 'hackathon').length})
+          </button>
+          <button
             className={`tab ${activeTab === 'past' ? 'active' : ''}`}
             onClick={() => setActiveTab('past')}
           >
             Completed ({registrations.past.length})
+          </button>
+          <button
+            className={`tab ${activeTab === 'cancelled' ? 'active' : ''}`}
+            onClick={() => setActiveTab('cancelled')}
+          >
+            Cancelled ({registrations.cancelled.length})
           </button>
         </div>
 

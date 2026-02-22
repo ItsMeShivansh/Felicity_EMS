@@ -1,17 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Fuse from 'fuse.js';
 import ParticipantNavbar from '../components/ParticipantNavbar';
 
 const BrowseEvents = () => {
   const navigate = useNavigate();
-  const [events, setEvents] = useState([]);
+  const [allEvents, setAllEvents] = useState([]);
   const [trendingEvents, setTrendingEvents] = useState([]);
   const [followedOrganizers, setFollowedOrganizers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   
   const [filters, setFilters] = useState({
-    search: '',
     eventType: 'all',
     eligibility: 'all',
     startDate: '',
@@ -22,10 +23,11 @@ const BrowseEvents = () => {
   useEffect(() => {
     fetchUserData();
     fetchTrending();
+    fetchAllEvents();
   }, []);
 
   useEffect(() => {
-    fetchEvents();
+    fetchAllEvents();
   }, [filters]);
 
   const fetchUserData = async () => {
@@ -53,12 +55,11 @@ const BrowseEvents = () => {
     }
   };
 
-  const fetchEvents = async () => {
+  const fetchAllEvents = async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
       
-      if (filters.search) params.append('search', filters.search);
       if (filters.eventType !== 'all') params.append('eventType', filters.eventType);
       if (filters.eligibility !== 'all') params.append('eligibility', filters.eligibility);
       if (filters.startDate) params.append('startDate', filters.startDate);
@@ -68,7 +69,7 @@ const BrowseEvents = () => {
       }
 
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/events/browse/all?${params}`);
-      setEvents(res.data);
+      setAllEvents(res.data);
       setLoading(false);
     } catch (err) {
       console.error('Error fetching events:', err);
@@ -76,13 +77,32 @@ const BrowseEvents = () => {
     }
   };
 
+  // Fuse.js fuzzy search
+  const fuse = useMemo(() => new Fuse(allEvents, {
+    keys: [
+      { name: 'name', weight: 0.4 },
+      { name: 'organizer.name', weight: 0.3 },
+      { name: 'description', weight: 0.15 },
+      { name: 'tags', weight: 0.15 }
+    ],
+    threshold: 0.4,
+    includeScore: true,
+    ignoreLocation: true,
+    minMatchCharLength: 2
+  }), [allEvents]);
+
+  const events = useMemo(() => {
+    if (!searchQuery.trim()) return allEvents;
+    return fuse.search(searchQuery).map(result => result.item);
+  }, [searchQuery, fuse, allEvents]);
+
   const handleFilterChange = (key, value) => {
     setFilters({ ...filters, [key]: value });
   };
 
   const clearFilters = () => {
+    setSearchQuery('');
     setFilters({
-      search: '',
       eventType: 'all',
       eligibility: 'all',
       startDate: '',
@@ -129,8 +149,8 @@ const BrowseEvents = () => {
             <input
               type="text"
               placeholder="Search events or organizers..."
-              value={filters.search}
-              onChange={(e) => handleFilterChange('search', e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input"
             />
           </div>
