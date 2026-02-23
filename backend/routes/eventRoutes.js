@@ -392,7 +392,7 @@ router.get('/:eventId/registrations', verifyToken, async (req, res) => {
 router.get('/browse/all', async (req, res) => {
   res.set('Cache-Control', 'no-store');
   try {
-    const { search, eventType, eligibility, startDate, endDate, followedClubs } = req.query;
+    const { search, eventType, eligibility, startDate, endDate, followedClubs, interests } = req.query;
 
     const allowedStatusFilter = ['published', 'ongoing'];
     let query;
@@ -446,11 +446,26 @@ router.get('/browse/all', async (req, res) => {
       }
     }
 
-    const events = await Event.find(query)
+    let events = await Event.find(query)
       .populate('organizer', 'name category')
       .sort({ startDate: 1 });
 
-    res.json(events.filter(e => e.organizer));
+    events = events.filter(e => e.organizer);
+
+    if (interests) {
+      const userInterestsList = interests.split(',');
+      events.sort((a, b) => {
+        const aMatches = (a.tags || []).filter(tag => userInterestsList.includes(tag)).length;
+        const bMatches = (b.tags || []).filter(tag => userInterestsList.includes(tag)).length;
+
+        if (aMatches !== bMatches) {
+          return bMatches - aMatches;
+        }
+        return new Date(a.startDate) - new Date(b.startDate);
+      });
+    }
+
+    res.json(events);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }

@@ -136,7 +136,12 @@ router.get('/my-registrations', verifyToken, async (req, res) => {
     const participantId = req.user.id;
 
     const registrations = await Registration.find({ participant: participantId })
-      .populate('event', 'name eventType startDate endDate location venue bannerImage status tags')
+      .populate({
+        path: 'event',
+        select: 'name eventType startDate endDate location venue bannerImage status tags organizer',
+        populate: { path: 'organizer', select: 'name' }
+      })
+      .populate('team', 'teamName')
       .sort({ registrationDate: -1 });
 
     const now = new Date();

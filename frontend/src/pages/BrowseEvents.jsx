@@ -9,6 +9,8 @@ const BrowseEvents = () => {
   const [allEvents, setAllEvents] = useState([]);
   const [trendingEvents, setTrendingEvents] = useState([]);
   const [followedOrganizers, setFollowedOrganizers] = useState([]);
+  const [userInterests, setUserInterests] = useState([]);
+  const [userDataLoaded, setUserDataLoaded] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -23,12 +25,13 @@ const BrowseEvents = () => {
   useEffect(() => {
     fetchUserData();
     fetchTrending();
-    fetchAllEvents();
   }, []);
 
   useEffect(() => {
-    fetchAllEvents();
-  }, [filters]);
+    if (userDataLoaded) {
+      fetchAllEvents();
+    }
+  }, [filters, userDataLoaded]);
 
   const fetchUserData = async () => {
     try {
@@ -41,8 +44,11 @@ const BrowseEvents = () => {
       const config = { headers: { Authorization: token } };
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/participant/preferences`, config);
       setFollowedOrganizers(res.data.followedOrganizers.filter(org => org).map(org => org._id));
+      setUserInterests(res.data.interests || []);
     } catch (err) {
       console.error('Error fetching user data:', err);
+    } finally {
+      setUserDataLoaded(true);
     }
   };
 
@@ -66,6 +72,9 @@ const BrowseEvents = () => {
       if (filters.endDate) params.append('endDate', filters.endDate);
       if (filters.followedOnly && followedOrganizers.length > 0) {
         params.append('followedClubs', followedOrganizers.join(','));
+      }
+      if (userInterests.length > 0) {
+        params.append('interests', userInterests.join(','));
       }
 
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/events/browse/all?${params}`);

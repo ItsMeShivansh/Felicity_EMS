@@ -129,14 +129,13 @@ const EditEvent = () => {
 
 
       const regCount = eventData.registrations?.length ?? eventData.currentRegistrations ?? 0;
-      if (eventData.status === 'draft' || (eventData.status === 'published' && regCount === 0)) {
+      if (eventData.status === 'draft') {
         setEditableFields('all');
-      } else if (eventData.status === 'published' && regCount > 0) {
+      } else if (eventData.status === 'published') {
         setEditableFields(['description', 'registrationDeadline', 'registrationLimit']);
       } else {
         setEditableFields([]);
       }
-
 
       const canEdit = eventData.status === 'draft' || regCount === 0;
       setCanEditForm(canEdit);
@@ -444,14 +443,9 @@ const EditEvent = () => {
           </div>
           <div className="status-info">
             <span className={`status-badge ${event.status}`}>{event.status}</span>
-            {event.status === 'published' && event.registrations?.length === 0 && (
-              <span className="success-badge">
-                Fully editable - No registrations yet
-              </span>
-            )}
-            {event.status === 'published' && event.registrations?.length > 0 && (
+            {event.status === 'published' && (
               <span className="warning-badge">
-                {event.registrations.length} registrations - Limited editing
+                Published – Limited editing allowed
               </span>
             )}
             {event.status === 'ongoing' && (
@@ -478,14 +472,9 @@ const EditEvent = () => {
               <strong>Draft Mode:</strong> All fields are editable. Fill in required fields to publish this event.
             </div>
           )}
-          {event.status === 'published' && event.registrations?.length === 0 && (
-            <div className="info-text" style={{ background: '#4ade8022', borderColor: '#4ade80' }}>
-              <strong>Published - Full Edit Mode:</strong> All fields are editable until first registration.
-            </div>
-          )}
-          {event.status === 'published' && event.registrations?.length > 0 && (
+          {event.status === 'published' && (
             <div className="info-text" style={{ background: '#f59e0b22', borderColor: '#f59e0b' }}>
-              <strong>Published - Limited Edit Mode:</strong> Only description, deadline, and limit can be edited after registrations.
+              <strong>Published – Limited Edit Mode:</strong> Only description, registration deadline (extend only), and registration limit (increase only) can be edited. Use "Close Registration" to end registrations early.
             </div>
           )}
           {event.status === 'ongoing' && (
@@ -660,7 +649,7 @@ const EditEvent = () => {
                 <p className="info-text">
                   {event.status === 'draft'
                     ? '✓ Form is editable (draft mode). Fill in custom fields and click "Update Registration Form" to save.'
-                    : '✓ Add custom fields to collect additional information from participants. Form is currently editable (no registrations yet).'}
+                    : '✓ Add custom fields to collect additional information from participants. The form will be locked once the first participant registers.'}
                 </p>
 
                 {/* Current Form Fields */}

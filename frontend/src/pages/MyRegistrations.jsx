@@ -172,6 +172,13 @@ const MyRegistrations = () => {
 
         <div className="card-body">
           <div className="event-info">
+            <p><strong>🏛️ Organizer:</strong> {event?.organizer?.name || 'TBA'}</p>
+            {event?.eventType === 'hackathon' && registration.team && (
+              <p><strong>🤝 Team:</strong> {registration.team.teamName}</p>
+            )}
+            {event?.eventType === 'hackathon' && !registration.team && registration.customFormData?.teamName && (
+              <p><strong>🤝 Team:</strong> {registration.customFormData.teamName}</p>
+            )}
             <p><strong>📅 Date:</strong> {new Date(event?.startDate).toLocaleDateString()}</p>
             <p><strong>📍 Location:</strong> {event?.location || event?.venue || 'TBA'}</p>
             <p><strong>🎫 Ticket ID:</strong> <code>{registration.ticketId}</code></p>

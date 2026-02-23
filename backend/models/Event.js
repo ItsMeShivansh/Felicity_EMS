@@ -188,9 +188,6 @@ eventSchema.methods.getEditableFields = function () {
     case 'draft':
       return 'all';
     case 'published':
-      if (this.currentRegistrations === 0) {
-        return 'all';
-      }
       return ['description', 'registrationDeadline', 'registrationLimit'];
     case 'ongoing':
       return ['status'];
