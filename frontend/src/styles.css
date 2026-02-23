@@ -3118,3 +3118,53 @@ textarea:disabled {
   text-decoration: line-through;
   opacity: 0.6;
 }
+
+/* ===================== Team Chat Responsive ===================== */
+@media (max-width: 768px) {
+  .chat-container {
+    height: calc(100vh - 110px);
+    border-radius: 0;
+    border-width: 1px 0;
+  }
+
+  .chat-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .chat-header h2 {
+    font-size: 1rem;
+  }
+
+  .chat-body {
+    padding: 0.75rem 1rem;
+  }
+
+  .chat-message {
+    max-width: 85%;
+  }
+
+  .chat-bubble {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .chat-input-form {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .chat-input {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .chat-typing {
+    padding: 0.2rem 1rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-message {
+    max-width: 90%;
+  }
+}
