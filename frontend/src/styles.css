@@ -2006,12 +2006,13 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .field-actions button {
   padding: 0.5rem 0.75rem;
-  background: var(--bg-primary);
-  border: none;
+  background: transparent;
+  border: 2px solid var(--border-color);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   cursor: pointer;
   font-weight: 600;
+  font-size: 1.1rem;
   transition: background var(--transition-base);
 }
 
@@ -2025,7 +2026,9 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 .btn-danger-small {
-  background: var(--color-danger) !important;
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  border: 2px solid var(--text-primary) !important;
   font-size: 1.25rem;
   line-height: 1;
   padding: 0.25rem 0.75rem !important;

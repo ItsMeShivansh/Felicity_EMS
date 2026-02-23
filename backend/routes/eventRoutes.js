@@ -89,6 +89,15 @@ router.patch('/:eventId', verifyToken, async (req, res) => {
         }
       }
 
+      if (req.body.registrationLimit !== undefined && event.registrationLimit != null) {
+        const newLimit = Number(req.body.registrationLimit);
+        if (newLimit < event.registrationLimit) {
+          return res.status(400).json({
+            message: 'Registration limit can only be increased after registrations have been received'
+          });
+        }
+      }
+
       editableFields.forEach(field => {
         if (req.body[field] !== undefined) {
           event[field] = req.body[field];

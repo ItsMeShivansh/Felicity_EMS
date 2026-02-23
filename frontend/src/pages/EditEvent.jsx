@@ -3,6 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import OrganizerNavbar from '../components/OrganizerNavbar';
 
+// Format a date to local datetime string for datetime-local inputs (avoids UTC shift)
+const toLocalDatetimeString = (dateStr) => {
+  const d = new Date(dateStr);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
 const EditEvent = () => {
   const navigate = useNavigate();
   const { eventId } = useParams();
@@ -90,9 +97,9 @@ const EditEvent = () => {
         eventType: eventData.eventType,
         description: eventData.description,
         eligibility: eventData.eligibility || '',
-        startDate: eventData.startDate ? new Date(eventData.startDate).toISOString().slice(0, 16) : '',
-        endDate: eventData.endDate ? new Date(eventData.endDate).toISOString().slice(0, 16) : '',
-        registrationDeadline: eventData.registrationDeadline ? new Date(eventData.registrationDeadline).toISOString().slice(0, 16) : '',
+        startDate: eventData.startDate ? toLocalDatetimeString(eventData.startDate) : '',
+        endDate: eventData.endDate ? toLocalDatetimeString(eventData.endDate) : '',
+        registrationDeadline: eventData.registrationDeadline ? toLocalDatetimeString(eventData.registrationDeadline) : '',
         registrationLimit: eventData.registrationLimit || '',
         location: eventData.location,
         entryFee: eventData.entryFee,
@@ -125,7 +132,7 @@ const EditEvent = () => {
       if (eventData.status === 'draft' || (eventData.status === 'published' && regCount === 0)) {
         setEditableFields('all');
       } else if (eventData.status === 'published' && regCount > 0) {
-        setEditableFields(['description', 'registrationDeadline']);
+        setEditableFields(['description', 'registrationDeadline', 'registrationLimit']);
       } else {
         setEditableFields([]);
       }

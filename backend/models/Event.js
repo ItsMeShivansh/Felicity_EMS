@@ -191,7 +191,7 @@ eventSchema.methods.getEditableFields = function () {
       if (this.currentRegistrations === 0) {
         return 'all';
       }
-      return ['description', 'registrationDeadline'];
+      return ['description', 'registrationDeadline', 'registrationLimit'];
     case 'ongoing':
       return ['status'];
     case 'completed':
@@ -205,6 +205,7 @@ eventSchema.methods.getEditableFields = function () {
 
 // Check if event can be published
 eventSchema.methods.canPublish = function () {
+  const now = new Date();
   return this.status === 'draft' &&
     this.name &&
     this.eventType &&
@@ -212,7 +213,10 @@ eventSchema.methods.canPublish = function () {
     this.registrationDeadline &&
     this.startDate &&
     this.endDate &&
-    this.tags && this.tags.length > 0;
+    this.tags && this.tags.length > 0 &&
+    this.registrationDeadline > now &&
+    this.startDate > this.registrationDeadline &&
+    this.endDate > this.startDate;
 };
 
 // Check if event can transition to ongoing
@@ -229,6 +233,16 @@ eventSchema.methods.canMarkAsCompleted = function () {
 eventSchema.pre('save', async function () {
   if (this.status === 'draft' || this.status === 'cancelled') {
     return;
+  }
+
+  // Reject publishing with a past registration deadline
+  if (this.isModified('status') && this.status === 'published') {
+    const now = new Date();
+    if (this.registrationDeadline && this.registrationDeadline <= now) {
+      const error = new Error('Registration deadline must be in the future to publish');
+      error.name = 'ValidationError';
+      throw error;
+    }
   }
 
   const requiredFields = {

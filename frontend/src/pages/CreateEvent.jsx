@@ -88,6 +88,22 @@ const CreateEvent = () => {
       setError('Event name and type are required');
       return;
     }
+
+    const now = new Date();
+    if (basicInfo.registrationDeadline && new Date(basicInfo.registrationDeadline) <= now) {
+      setError('Registration deadline must be in the future');
+      return;
+    }
+    if (basicInfo.startDate && basicInfo.registrationDeadline && 
+        new Date(basicInfo.startDate) <= new Date(basicInfo.registrationDeadline)) {
+      setError('Start date must be after registration deadline');
+      return;
+    }
+    if (basicInfo.endDate && basicInfo.startDate && 
+        new Date(basicInfo.endDate) <= new Date(basicInfo.startDate)) {
+      setError('End date must be after start date');
+      return;
+    }
     
     setStep(2);
   };
