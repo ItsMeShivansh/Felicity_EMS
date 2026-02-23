@@ -9,6 +9,7 @@ const TeamChat = () => {
   const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
   const [team, setTeam] = useState(null);
   const [loading, setLoading] = useState(true);
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -117,6 +118,27 @@ const TeamChat = () => {
     setNewMessage('');
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (!socketRef.current) return;
+        
+        socketRef.current.emit('send-message', {
+          teamId,
+          content: reader.result,
+          type: 'file'
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleTyping = (e) => {
     setNewMessage(e.target.value);
     if (!socketRef.current) return;
@@ -217,6 +239,14 @@ const TeamChat = () => {
                           <a href={msg.content} target="_blank" rel="noopener noreferrer" className="chat-link">
                             {msg.content}
                           </a>
+                        ) : msg.type === 'file' ? (
+                          msg.content.startsWith('data:image/') ? (
+                            <img src={msg.content} alt="Shared file" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px' }} />
+                          ) : (
+                            <a href={msg.content} download="shared_file" className="btn-secondary btn-sm" style={{ display: 'inline-block', textDecoration: 'none' }}>
+                              📎 Download File
+                            </a>
+                          )
                         ) : (
                           <p>{msg.content}</p>
                         )}
@@ -246,6 +276,14 @@ const TeamChat = () => {
 
           {/* Chat Input */}
           <form onSubmit={handleSend} className="chat-input-form">
+            <label className="btn-secondary file-upload-btn" style={{ cursor: 'pointer', padding: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              📎
+              <input 
+                type="file" 
+                onChange={handleFileChange} 
+                style={{ display: 'none' }} 
+              />
+            </label>
             <input
               type="text"
               value={newMessage}

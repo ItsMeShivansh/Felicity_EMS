@@ -2914,6 +2914,8 @@ textarea:disabled {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 140px);
+  max-width: 900px;
+  margin: 0 auto;
   border: 2px solid var(--border-color);
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -3125,20 +3127,27 @@ textarea:disabled {
 @media (max-width: 768px) {
   .chat-container {
     height: calc(100vh - 110px);
-    border-radius: 0;
-    border-width: 1px 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .chat-header {
-    padding: 0.75rem 1rem;
+    padding: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .chat-header-left {
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
   .chat-header h2 {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .chat-body {
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
   }
 
   .chat-message {
@@ -3151,22 +3160,40 @@ textarea:disabled {
   }
 
   .chat-input-form {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem;
+    gap: 0.4rem;
+    box-sizing: border-box;
+    width: 100%;
   }
 
   .chat-input {
-    padding: 0.6rem 0.75rem;
+    padding: 0.5rem;
     font-size: 0.9rem;
+    flex: 1;
+    min-width: 0;
+    /* Prevent flex item from expanding beyond container */
+  }
+
+  .file-upload-btn,
+  .btn-submit {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
   }
 
   .chat-typing {
-    padding: 0.2rem 1rem;
+    padding: 0.2rem 0.75rem;
     font-size: 0.75rem;
   }
 }
 
 @media (max-width: 480px) {
   .chat-message {
-    max-width: 90%;
+    max-width: 92%;
+  }
+
+  .chat-header-left div {
+    /* Stack title and members vertically more aggressively on tiny screens */
+    width: 100%;
   }
 }
