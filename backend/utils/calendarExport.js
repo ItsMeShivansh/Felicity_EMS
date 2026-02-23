@@ -19,7 +19,7 @@ const generateICS = (event, registration) => {
   const endDate = formatDate(event.endDate);
   const created = formatDate(registration.registrationDate);
   const uid = `${registration.ticketId}@felicity-events.com`;
-  
+
   const location = escapeICS(event.location || event.venue || 'TBA');
   const description = escapeICS(
     `Event: ${event.name}\n` +
@@ -27,7 +27,7 @@ const generateICS = (event, registration) => {
     `Status: ${registration.status}\n` +
     `${event.description || ''}`
   );
-  
+
   const icsContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -56,7 +56,7 @@ const generateICS = (event, registration) => {
     'END:VEVENT',
     'END:VCALENDAR'
   ].join('\r\n');
-  
+
   return icsContent;
 };
 
@@ -68,7 +68,7 @@ const generateBatchICS = (registrations) => {
     const endDate = formatDate(event.endDate);
     const created = formatDate(reg.registrationDate);
     const uid = `${reg.ticketId}@felicity-events.com`;
-    
+
     const location = escapeICS(event.location || event.venue || 'TBA');
     const description = escapeICS(
       `Event: ${event.name}\n` +
@@ -76,7 +76,7 @@ const generateBatchICS = (registrations) => {
       `Status: ${reg.status}\n` +
       `${event.description || ''}`
     );
-    
+
     return [
       'BEGIN:VEVENT',
       `UID:${uid}`,
@@ -100,7 +100,7 @@ const generateBatchICS = (registrations) => {
       'END:VEVENT'
     ].join('\r\n');
   });
-  
+
   const icsContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -110,7 +110,7 @@ const generateBatchICS = (registrations) => {
     ...events,
     'END:VCALENDAR'
   ].join('\r\n');
-  
+
   return icsContent;
 };
 
@@ -123,7 +123,7 @@ const generateGoogleCalendarLink = (event, registration) => {
     `Ticket ID: ${registration.ticketId}\n${event.description || ''}`
   );
   const location = encodeURIComponent(event.location || event.venue || 'TBA');
-  
+
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDate}/${endDate}&details=${details}&location=${location}`;
 };
 
@@ -136,8 +136,8 @@ const generateOutlookLink = (event, registration) => {
     `Ticket ID: ${registration.ticketId}\n${event.description || ''}`
   );
   const location = encodeURIComponent(event.location || event.venue || 'TBA');
-  
-  return `https://outlook.live.com/calendar/0/deeplink/compose?subject=${title}&startdt=${startDate}&enddt=${endDate}&body=${body}&location=${location}`;
+
+  return `https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=${title}&startdt=${startDate}&enddt=${endDate}&body=${body}&location=${location}`;
 };
 
 module.exports = {
