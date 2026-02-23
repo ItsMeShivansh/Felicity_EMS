@@ -137,7 +137,7 @@ const generateOutlookLink = (event, registration) => {
   );
   const location = encodeURIComponent(event.location || event.venue || 'TBA');
 
-  return `https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=${title}&startdt=${startDate}&enddt=${endDate}&body=${body}&location=${location}`;
+  return `https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=${title}&startdt=${startDate}&enddt=${endDate}&body=${body}&location=${location}`;
 };
 
 module.exports = {
