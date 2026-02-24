@@ -3125,6 +3125,103 @@ textarea:disabled {
   opacity: 0.6;
 }
 
+/* ===================== My Registrations Responsive ===================== */
+@media (max-width: 768px) {
+  .page-header-with-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
+  }
+
+  .tabs::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .tabs::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 4px;
+  }
+
+  .tab {
+    white-space: nowrap;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .registrations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .registration-card {
+    padding: 1rem;
+  }
+
+  .card-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .card-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .card-actions button,
+  .card-actions .calendar-dropdown {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .calendar-dropdown {
+    width: 100%;
+  }
+
+  .calendar-dropdown button {
+    width: 100%;
+  }
+
+  .calendar-menu {
+    width: 100%;
+    position: static;
+    margin-top: 0.5rem;
+    box-shadow: none;
+    border: 2px solid var(--border-color);
+  }
+
+  .calendar-menu button {
+    width: 100%;
+  }
+
+  .ticket-modal {
+    width: 95%;
+    padding: 1.5rem;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .ticket-content {
+    flex-direction: column;
+  }
+
+  .ticket-qr {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ticket-qr img {
+    max-width: 200px;
+    height: auto;
+  }
+}
+
 /* ===================== Team Chat Responsive ===================== */
 @media (max-width: 768px) {
   .chat-container {
