@@ -4,6 +4,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Participant = require('../models/Participant');
 const Organizer = require('../models/Organizer');
+const { sendOTPEmail } = require('../utils/emailService');
+
+// In-memory OTP store for email verification
+// Key: email (string) -> Value: { otp: string, expiresAt: number }
+const otpStore = new Map();
 
 // Register
 router.post('/register', async (req, res) => {
@@ -68,6 +73,55 @@ router.post('/register', async (req, res) => {
 
   } catch (e) {
     res.status(500).json({ message: "Server Error", error: e.message });
+  }
+});
+
+// Send OTP
+router.post('/send-otp', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Store OTP, valid for 10 minutes
+    otpStore.set(email, {
+      otp,
+      expiresAt: Date.now() + 10 * 60 * 1000
+    });
+
+    const result = await sendOTPEmail(email, otp);
+    if (result.success) {
+      res.json({ message: 'OTP sent successfully' });
+    } else {
+      res.status(500).json({ message: 'Failed to send OTP email' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Verify OTP
+router.post('/verify-otp', (req, res) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) return res.status(400).json({ message: 'Email and OTP are required' });
+
+  const record = otpStore.get(email);
+  if (!record) {
+    return res.status(400).json({ message: 'No OTP found for this email. Please request a new one.' });
+  }
+
+  if (Date.now() > record.expiresAt) {
+    otpStore.delete(email);
+    return res.status(400).json({ message: 'OTP has expired. Please request a new one.' });
+  }
+
+  if (record.otp === String(otp)) {
+    otpStore.delete(email);
+    res.json({ message: 'OTP verified successfully' });
+  } else {
+    res.status(400).json({ message: 'Invalid OTP' });
   }
 });
 

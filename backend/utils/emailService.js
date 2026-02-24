@@ -12,14 +12,14 @@ const getBrevoClient = () => {
   const apiInstance = new brevo.TransactionalEmailsApi();
   const apiKey = apiInstance.authentications['apiKey'];
   apiKey.apiKey = process.env.BREVO_API_KEY;
-  
+
   return apiInstance;
 };
 
 const sendTicketEmail = async (options) => {
   try {
     const apiInstance = getBrevoClient();
-    
+
     if (!apiInstance) {
       // Log email details in development
       console.log('📧 EMAIL (Development Mode):');
@@ -158,22 +158,22 @@ const sendTicketEmail = async (options) => {
 
     // Create Brevo email object
     const sendSmtpEmail = new brevo.SendSmtpEmail();
-    
+
     sendSmtpEmail.sender = {
       name: 'Felicity Events',
       email: process.env.BREVO_SENDER_EMAIL || 'noreply@felicity.iiit.ac.in'
     };
-    
+
     sendSmtpEmail.to = [
       {
         email: options.to,
         name: options.participantName
       }
     ];
-    
+
     sendSmtpEmail.subject = `🎫 Your ticket for ${options.eventName}`;
     sendSmtpEmail.htmlContent = htmlContent;
-    
+
     sendSmtpEmail.attachment = [
       {
         name: `ticket-${options.ticketId}.png`,
@@ -183,10 +183,10 @@ const sendTicketEmail = async (options) => {
 
     // Send email via Brevo API
     const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
-    
+
     console.log('✅ Email sent successfully via Brevo:', result.messageId);
     return { success: true, messageId: result.messageId };
-    
+
   } catch (error) {
     console.error('❌ Error sending email via Brevo:', error);
     // Don't throw error - registration should succeed even if email fails
@@ -194,6 +194,49 @@ const sendTicketEmail = async (options) => {
   }
 };
 
+const sendOTPEmail = async (email, otp) => {
+  try {
+    const apiInstance = getBrevoClient();
+
+    if (!apiInstance) {
+      console.log('📧 EMAIL (Development Mode):');
+      console.log('To:', email);
+      console.log('OTP:', otp);
+      console.log('-----------------------------------');
+      return { success: true, message: 'OTP logged (development mode)' };
+    }
+
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; padding: 20px; text-align: center;">
+        <h2>Verify Your Email</h2>
+        <p>Your One-Time Password (OTP) for registration is:</p>
+        <h1 style="background: #f4f4f4; padding: 10px; border-radius: 5px; display: inline-block; letter-spacing: 5px;">${otp}</h1>
+        <p>This OTP will expire in 10 minutes.</p>
+      </div>
+    `;
+
+    const sendSmtpEmail = new brevo.SendSmtpEmail();
+
+    sendSmtpEmail.sender = {
+      name: 'Felicity Events',
+      email: process.env.BREVO_SENDER_EMAIL || 'noreply@felicity.iiit.ac.in'
+    };
+
+    sendSmtpEmail.to = [{ email }];
+    sendSmtpEmail.subject = `🔐 Your Registration OTP: ${otp}`;
+    sendSmtpEmail.htmlContent = htmlContent;
+
+    const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    console.log('✅ OTP Email sent successfully via Brevo:', result.messageId);
+    return { success: true, messageId: result.messageId };
+
+  } catch (error) {
+    console.error('❌ Error sending OTP email via Brevo:', error);
+    return { success: false, error: error.message };
+  }
+};
+
 module.exports = {
-  sendTicketEmail
+  sendTicketEmail,
+  sendOTPEmail
 };
